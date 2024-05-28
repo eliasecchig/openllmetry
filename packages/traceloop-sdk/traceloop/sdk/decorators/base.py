@@ -39,7 +39,7 @@ def entity_method(
             with get_tracer() as tracer:
                 span = tracer.start_span(span_name)
                 ctx = trace.set_span_in_context(span)
-                context_api.attach(ctx)
+                token = context_api.attach(ctx)
 
                 if tlp_span_kind in [
                     TraceloopSpanKindValues.TASK,
@@ -81,6 +81,7 @@ def entity_method(
                     Telemetry().log_exception(e)
 
                 span.end()
+                context_api.detach(token)
 
                 return res
 
